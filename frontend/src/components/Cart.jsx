@@ -4,15 +4,22 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 
-export const Cart: React.FC = () => {
+/**
+ * Cart Drawer Component
+ * Displays slide-over modal for cart review, item quantity adjustment, and checkout submission.
+ */
+export const Cart = () => {
   const { cart, removeFromCart, updateQuantity, clearCart, cartSubtotal, isCartOpen, setIsCartOpen } = useCart();
   const { user } = useAuth();
 
   const [isCheckingOut, setIsCheckingOut] = useState(false);
-  const [checkoutSuccess, setCheckoutSuccess] = useState<string | null>(null);
+  const [checkoutSuccess, setCheckoutSuccess] = useState(null);
 
   if (!isCartOpen) return null;
 
+  /**
+   * Submit cart order to backend REST API endpoint /api/orders
+   */
   const handleCheckout = async () => {
     try {
       setIsCheckingOut(true);
@@ -56,7 +63,7 @@ export const Cart: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
-      {/* Backdrop */}
+      {/* Backdrop Overlay */}
       <div
         className="absolute inset-0 bg-stone-950/75 backdrop-blur-sm transition-opacity"
         onClick={() => setIsCartOpen(false)}
@@ -81,7 +88,7 @@ export const Cart: React.FC = () => {
             </button>
           </div>
 
-          {/* Cart Content / List */}
+          {/* Cart Item List */}
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {checkoutSuccess ? (
               <div className="p-8 text-center glass-panel rounded-2xl space-y-4 my-auto">
@@ -106,8 +113,7 @@ export const Cart: React.FC = () => {
                     alt={item.name}
                     className="w-16 h-16 object-cover rounded-lg bg-stone-950 shrink-0"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        'https://images.unsplash.com/photo-1612196808214-b7e239e5f6b7?auto=format&fit=crop&q=80&w=800';
+                      e.target.src = 'https://images.unsplash.com/photo-1612196808214-b7e239e5f6b7?auto=format&fit=crop&q=80&w=800';
                     }}
                   />
 

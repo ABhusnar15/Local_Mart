@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Plus, DollarSign, Hammer, CheckCircle2, Truck, RefreshCw, Trash2, Edit3, Image } from 'lucide-react';
+import { Package, Plus, DollarSign, Hammer, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
-import { Product } from './Shop';
-import { Order } from './BuyerDashboard';
 
-export const SellerDashboard: React.FC = () => {
+/**
+ * Seller Dashboard Component
+ * Artisan portal for managing shop inventory, adding new pottery products,
+ * monitoring sales revenue, and updating order fulfillment statuses.
+ */
+export const SellerDashboard = () => {
   const { user } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<'orders' | 'products'>('orders');
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [activeTab, setActiveTab] = useState('orders');
+  const [orders, setOrders] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // New Product Modal State
@@ -29,6 +32,9 @@ export const SellerDashboard: React.FC = () => {
     fetchData();
   }, [user]);
 
+  /**
+   * Fetch orders and products from backend API
+   */
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -44,7 +50,10 @@ export const SellerDashboard: React.FC = () => {
     }
   };
 
-  const handleUpdateOrderStatus = async (orderId: number, newStatus: string) => {
+  /**
+   * Update fulfillment status of a customer order via PATCH /api/orders/{id}/status
+   */
+  const handleUpdateOrderStatus = async (orderId, newStatus) => {
     try {
       await api.patch(`/orders/${orderId}/status`, { status: newStatus });
       fetchData();
@@ -53,7 +62,10 @@ export const SellerDashboard: React.FC = () => {
     }
   };
 
-  const handleAddProduct = async (e: React.FormEvent) => {
+  /**
+   * Add a new pottery item to the shop inventory via POST /api/products
+   */
+  const handleAddProduct = async (e) => {
     e.preventDefault();
     try {
       const payload = {
@@ -79,7 +91,10 @@ export const SellerDashboard: React.FC = () => {
     }
   };
 
-  const handleDeleteProduct = async (id: number) => {
+  /**
+   * Delete a product from inventory via DELETE /api/products/{id}
+   */
+  const handleDeleteProduct = async (id) => {
     if (!window.confirm('Delete this product from your shop?')) return;
     try {
       await api.delete(`/products/${id}`);
@@ -114,7 +129,7 @@ export const SellerDashboard: React.FC = () => {
         </button>
       </div>
 
-      {/* Metric Cards */}
+      {/* Analytics Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
         <div className="glass-panel p-6 rounded-2xl flex items-center gap-4">
           <div className="p-3.5 rounded-xl bg-amber-600/20 text-amber-400">
@@ -147,7 +162,7 @@ export const SellerDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* Navigation Tabs */}
       <div className="flex items-center gap-4 border-b border-stone-800 mb-8">
         <button
           onClick={() => setActiveTab('orders')}
@@ -172,7 +187,7 @@ export const SellerDashboard: React.FC = () => {
         </button>
       </div>
 
-      {/* Orders Tab Content */}
+      {/* Orders Tab View */}
       {activeTab === 'orders' && (
         <div className="space-y-6">
           {orders.length === 0 ? (
@@ -206,7 +221,7 @@ export const SellerDashboard: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Items */}
+                {/* Items & Custom Specs */}
                 <div className="bg-stone-950/60 p-4 rounded-xl space-y-2 border border-stone-800">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-amber-500">Order Specifications</span>
                   {order.items && order.items.length > 0 ? (
@@ -237,7 +252,7 @@ export const SellerDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* Products Tab Content */}
+      {/* Products Tab View */}
       {activeTab === 'products' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((p) => (

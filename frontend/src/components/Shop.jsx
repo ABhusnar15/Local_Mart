@@ -1,42 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, ShoppingBag, SlidersHorizontal, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Search, ShoppingBag, SlidersHorizontal, Sparkles, CheckCircle2 } from 'lucide-react';
 import { api } from '../services/api';
 import { useCart } from '../context/CartContext';
 
-export interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  category: string;
-  shape: string;
-  size: string;
-  glazeColor: string;
-  imageUrl: string;
-  stockQuantity: number;
-  inStock: boolean;
-  sellerName?: string;
-}
-
-interface ShopProps {
-  onCustomizeClick: () => void;
-}
-
-export const Shop: React.FC<ShopProps> = ({ onCustomizeClick }) => {
-  const [products, setProducts] = useState<Product[]>([]);
+/**
+ * Shop Component
+ * Displays available handcrafted pottery products with category filters, search input, and instant cart additions.
+ */
+export const Shop = ({ onCustomizeClick }) => {
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
-  const [addedNotice, setAddedNotice] = useState<number | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState('ALL');
+  const [addedNotice, setAddedNotice] = useState(null);
 
   const { addToCart } = useCart();
 
   const categories = ['ALL', 'Vases', 'Tableware', 'Planters', 'Cups', 'Bowls'];
 
+  // Fetch products whenever selected category or search query changes
   useEffect(() => {
     fetchProducts();
   }, [selectedCategory, searchQuery]);
 
+  /**
+   * Fetch products from backend REST API endpoint /api/products
+   */
   const fetchProducts = async () => {
     try {
       setLoading(true);
@@ -61,7 +50,10 @@ export const Shop: React.FC<ShopProps> = ({ onCustomizeClick }) => {
     }
   };
 
-  const handleAddToCart = (product: Product) => {
+  /**
+   * Add selected product to cart with visual confirmation badge.
+   */
+  const handleAddToCart = (product) => {
     addToCart({
       productId: product.id,
       name: product.name,
@@ -81,7 +73,7 @@ export const Shop: React.FC<ShopProps> = ({ onCustomizeClick }) => {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       
-      {/* Section Header */}
+      {/* Section Header & Customizer CTA */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
         <div>
           <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">Handcrafted Catalog</span>
@@ -89,7 +81,7 @@ export const Shop: React.FC<ShopProps> = ({ onCustomizeClick }) => {
           <p className="text-stone-400 text-sm mt-2">Explore handcrafted pottery items directly from verified master craftsmen.</p>
         </div>
 
-        {/* Custom Pottery Studio CTA Banner */}
+        {/* 3D Pottery Studio Banner CTA */}
         <button
           onClick={onCustomizeClick}
           className="flex items-center gap-3 px-6 py-3.5 rounded-2xl glaze-terracotta text-stone-100 font-bold hover:opacity-95 transition-all shadow-lg shadow-amber-900/30"
@@ -99,10 +91,10 @@ export const Shop: React.FC<ShopProps> = ({ onCustomizeClick }) => {
         </button>
       </div>
 
-      {/* Search & Category Filter Controls */}
+      {/* Search Bar & Category Filter Pills */}
       <div className="glass-panel p-4 rounded-2xl mb-10 flex flex-col md:flex-row items-center justify-between gap-4">
         
-        {/* Search Bar */}
+        {/* Search Input */}
         <div className="relative w-full md:w-96">
           <Search className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
           <input
@@ -114,7 +106,7 @@ export const Shop: React.FC<ShopProps> = ({ onCustomizeClick }) => {
           />
         </div>
 
-        {/* Category Pills */}
+        {/* Category Buttons */}
         <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 no-scrollbar">
           {categories.map((cat) => (
             <button
@@ -152,14 +144,14 @@ export const Shop: React.FC<ShopProps> = ({ onCustomizeClick }) => {
               key={product.id}
               className="glass-card rounded-2xl overflow-hidden flex flex-col justify-between group"
             >
-              {/* Product Image */}
+              {/* Product Image Showcase */}
               <div className="relative h-64 overflow-hidden bg-stone-900">
                 <img
                   src={product.imageUrl}
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1612196808214-b7e239e5f6b7?auto=format&fit=crop&q=80&w=800';
+                    e.target.src = 'https://images.unsplash.com/photo-1612196808214-b7e239e5f6b7?auto=format&fit=crop&q=80&w=800';
                   }}
                 />
                 <span className="absolute top-3 left-3 px-3 py-1 bg-stone-950/80 backdrop-blur-md text-amber-400 text-[11px] font-bold rounded-lg border border-stone-800">
@@ -173,14 +165,12 @@ export const Shop: React.FC<ShopProps> = ({ onCustomizeClick }) => {
                 )}
               </div>
 
-              {/* Product Details */}
+              {/* Product Info & Actions */}
               <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-stone-100 font-serif group-hover:text-amber-400 transition-colors">
-                      {product.name}
-                    </h3>
-                  </div>
+                  <h3 className="text-lg font-bold text-stone-100 font-serif group-hover:text-amber-400 transition-colors">
+                    {product.name}
+                  </h3>
 
                   <p className="text-xs text-stone-400 mt-1.5 line-clamp-2 leading-relaxed">
                     {product.description}

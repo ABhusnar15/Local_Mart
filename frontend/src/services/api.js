@@ -1,5 +1,9 @@
 import axios from 'axios';
 
+/**
+ * Axios HTTP Client Instance for Local Mart Backend API
+ * Handles base URL configuration and JWT token authorization headers.
+ */
 const API_BASE_URL = '/api';
 
 export const api = axios.create({
@@ -9,7 +13,10 @@ export const api = axios.create({
   },
 });
 
-// Interceptor to inject JWT token into Authorization header
+/**
+ * Request Interceptor: Automatically attaches JWT bearer token to outgoing HTTP requests
+ * if user is authenticated.
+ */
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('localmart_token');

@@ -1,19 +1,25 @@
 import React, { useState } from 'react';
-import { Palette, Sparkles, ShoppingBag, RotateCw, Type, Info, Check, ShieldCheck } from 'lucide-react';
+import { Palette, Sparkles, ShoppingBag, RotateCw, Type, Check, ShieldCheck } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { api } from '../services/api';
 
-export const ProductCustomizer: React.FC = () => {
-  const [shape, setShape] = useState<'Classic' | 'Tapered' | 'Fluted'>('Classic');
-  const [size, setSize] = useState<'S' | 'M' | 'L'>('M');
+/**
+ * 3D Pottery Studio Customizer Component
+ * Provides interactive visual controls for customizing pottery shapes (Classic, Tapered, Fluted),
+ * size scale, glaze mineral colors, and hand-engraved text preview.
+ */
+export const ProductCustomizer = () => {
+  const [shape, setShape] = useState('Classic');
+  const [size, setSize] = useState('M');
   const [glazeColor, setGlazeColor] = useState('Cobalt Blue');
   const [engraving, setEngraving] = useState('');
   const [rotation, setRotation] = useState(0);
   const [isOrdering, setIsOrdering] = useState(false);
-  const [orderSuccess, setOrderSuccess] = useState<string | null>(null);
+  const [orderSuccess, setOrderSuccess] = useState(null);
 
   const { addToCart } = useCart();
 
+  // Color options for mineral glazes
   const glazeOptions = [
     { name: 'Terracotta', hex: '#ea580c', bgClass: 'glaze-terracotta' },
     { name: 'Cobalt Blue', hex: '#2563eb', bgClass: 'glaze-cobalt' },
@@ -22,7 +28,9 @@ export const ProductCustomizer: React.FC = () => {
     { name: 'Charcoal Black', hex: '#374151', bgClass: 'glaze-charcoal' },
   ];
 
-  // Dynamic price calculation
+  /**
+   * Dynamic price calculation algorithm based on shape, size, and engraving options.
+   */
   const calculatePrice = () => {
     let base = 40.0;
     if (shape === 'Tapered') base += 10.0;
@@ -38,6 +46,9 @@ export const ProductCustomizer: React.FC = () => {
 
   const totalPrice = calculatePrice();
 
+  /**
+   * Add customized pottery creation to shopping cart.
+   */
   const handleAddToCart = () => {
     addToCart({
       name: `Custom ${shape} Pottery (${size})`,
@@ -52,6 +63,9 @@ export const ProductCustomizer: React.FC = () => {
     });
   };
 
+  /**
+   * Submit direct custom order request to backend API.
+   */
   const handleDirectOrder = async () => {
     try {
       setIsOrdering(true);
@@ -107,10 +121,10 @@ export const ProductCustomizer: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* Left Interactive 3D Canvas Visualizer */}
+        {/* Left 3D Canvas Visualizer */}
         <div className="lg:col-span-7 glass-panel rounded-3xl p-6 flex flex-col items-center justify-between min-h-[520px] relative overflow-hidden">
           
-          {/* Top Canvas Controls */}
+          {/* Controls Bar */}
           <div className="w-full flex items-center justify-between text-xs text-stone-400 z-10">
             <span className="flex items-center gap-2 font-mono uppercase tracking-wider bg-stone-900/80 px-3 py-1.5 rounded-xl border border-stone-800">
               <RotateCw className="w-3.5 h-3.5 text-amber-500 animate-spin" />
@@ -124,7 +138,7 @@ export const ProductCustomizer: React.FC = () => {
             </button>
           </div>
 
-          {/* Interactive SVG / Canvas Pottery Visualizer */}
+          {/* Interactive SVG Rendering */}
           <div className="my-auto py-8 relative flex items-center justify-center w-full transition-all duration-500">
             
             {/* Pedestal Shadow */}
@@ -141,7 +155,7 @@ export const ProductCustomizer: React.FC = () => {
                 className="drop-shadow-2xl transition-all duration-500 filter"
               >
                 <defs>
-                  {/* Dynamic Gradient based on selected Glaze Color */}
+                  {/* Dynamic Radial Gradient matching Glaze Selection */}
                   <radialGradient id="potteryGlaze" cx="35%" cy="30%" r="70%">
                     <stop
                       offset="0%"
@@ -186,14 +200,9 @@ export const ProductCustomizer: React.FC = () => {
                       }
                     />
                   </radialGradient>
-
-                  <filter id="clayTexture">
-                    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
-                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" />
-                  </filter>
                 </defs>
 
-                {/* Pottery Shape SVG Paths */}
+                {/* Dynamic SVG Contour Paths */}
                 {shape === 'Classic' && (
                   <path
                     d="M 60 40 Q 100 25 140 40 L 145 60 C 175 110 170 180 140 210 Q 100 225 60 210 C 30 180 25 110 55 60 Z"
@@ -221,10 +230,10 @@ export const ProductCustomizer: React.FC = () => {
                   />
                 )}
 
-                {/* Rim highlight */}
+                {/* Rim Highlight */}
                 <ellipse cx="100" cy="38" rx="40" ry="12" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" />
 
-                {/* Custom Text Engraving on Pottery */}
+                {/* Live Custom Text Engraving */}
                 {engraving && (
                   <text
                     x="100"
@@ -244,7 +253,7 @@ export const ProductCustomizer: React.FC = () => {
             </div>
           </div>
 
-          {/* Bottom Live Info Bar */}
+          {/* Bottom Specifications Bar */}
           <div className="w-full flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-stone-800 text-xs text-stone-300">
             <div className="flex items-center gap-4">
               <span>Shape: <strong className="text-amber-400">{shape}</strong></span>
@@ -259,18 +268,17 @@ export const ProductCustomizer: React.FC = () => {
 
         </div>
 
-        {/* Right Customization Controls & Order Form */}
+        {/* Right Controls Panel */}
         <div className="lg:col-span-5 space-y-6">
-          
           <div className="glass-panel p-6 rounded-3xl space-y-6">
             
-            {/* 1. Shape Selection */}
+            {/* 1. Shape Selector */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-amber-400 mb-3">
                 1. Select Pottery Shape
               </label>
               <div className="grid grid-cols-3 gap-3">
-                {(['Classic', 'Tapered', 'Fluted'] as const).map((s) => (
+                {['Classic', 'Tapered', 'Fluted'].map((s) => (
                   <button
                     key={s}
                     onClick={() => setShape(s)}
@@ -286,7 +294,7 @@ export const ProductCustomizer: React.FC = () => {
               </div>
             </div>
 
-            {/* 2. Size Selection */}
+            {/* 2. Size Selector */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-amber-400 mb-3">
                 2. Select Size
@@ -299,7 +307,7 @@ export const ProductCustomizer: React.FC = () => {
                 ].map((sz) => (
                   <button
                     key={sz.key}
-                    onClick={() => setSize(sz.key as 'S' | 'M' | 'L')}
+                    onClick={() => setSize(sz.key)}
                     className={`py-2.5 px-3 rounded-2xl text-xs font-semibold text-center transition-all border flex flex-col items-center justify-center ${
                       size === sz.key
                         ? 'bg-amber-600/20 border-amber-500 text-amber-300 shadow-md'
@@ -313,7 +321,7 @@ export const ProductCustomizer: React.FC = () => {
               </div>
             </div>
 
-            {/* 3. Glaze Mineral Color */}
+            {/* 3. Glaze Mineral Color Selector */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-amber-400 mb-3">
                 3. Glaze Mineral Color
@@ -334,10 +342,12 @@ export const ProductCustomizer: React.FC = () => {
                   </button>
                 ))}
               </div>
-              <p className="text-[11px] text-stone-400 mt-2 text-center">Selected Glaze: <span className="text-stone-200 font-semibold">{glazeColor}</span></p>
+              <p className="text-[11px] text-stone-400 mt-2 text-center">
+                Selected Glaze: <span className="text-stone-200 font-semibold">{glazeColor}</span>
+              </p>
             </div>
 
-            {/* 4. Text Engraving */}
+            {/* 4. Text Engraving Input */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-amber-400 mb-2 flex items-center justify-between">
                 <span className="flex items-center gap-1.5">
@@ -394,7 +404,6 @@ export const ProductCustomizer: React.FC = () => {
             </div>
 
           </div>
-
         </div>
 
       </div>

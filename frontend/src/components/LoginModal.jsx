@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
-import { X, Lock, Mail, User as UserIcon, Store, Phone, MapPin } from 'lucide-react';
+import { X, Lock, Mail, User as UserIcon, Store } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 
-interface LoginModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
+/**
+ * Authentication Modal Component
+ * Renders tabbed login and registration forms with 1-click demo credentials.
+ */
+export const LoginModal = ({ isOpen, onClose }) => {
   const { login } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
-  const [role, setRole] = useState<'BUYER' | 'SELLER'>('BUYER');
+  const [role, setRole] = useState('BUYER');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,12 +19,15 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
 
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  /**
+   * Submit login or register request to backend API
+   */
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
@@ -61,19 +63,25 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         });
         onClose();
       }
-    } catch (err: any) {
+    } catch (err) {
       setError(err.response?.data?.message || 'Authentication failed. Check credentials.');
     } finally {
       setLoading(false);
     }
   };
 
+  /**
+   * Auto-fill demo customer buyer credentials
+   */
   const handleQuickDemoBuyer = () => {
     setEmail('buyer@localmart.com');
     setPassword('buyer123');
     setIsSignUp(false);
   };
 
+  /**
+   * Auto-fill demo artisan seller credentials
+   */
   const handleQuickDemoSeller = () => {
     setEmail('artisan@localmart.com');
     setPassword('artisan123');
@@ -86,7 +94,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
       <div className="relative glass-panel max-w-md w-full p-6 sm:p-8 rounded-3xl z-10 shadow-2xl border border-stone-800">
         
-        {/* Close Button */}
+        {/* Close Modal Button */}
         <button
           onClick={onClose}
           className="absolute top-5 right-5 p-2 rounded-full text-stone-400 hover:text-stone-100 hover:bg-stone-800 transition-colors"
@@ -94,7 +102,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           <X className="w-5 h-5" />
         </button>
 
-        {/* Title */}
+        {/* Modal Header */}
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold font-serif text-stone-100">
             {isSignUp ? 'Join Local Mart' : 'Welcome Back'}
@@ -104,7 +112,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           </p>
         </div>
 
-        {/* Quick Demo Login Bar */}
+        {/* One-Click Demo Credentials Bar */}
         <div className="bg-stone-950/80 p-3 rounded-2xl mb-6 text-center border border-stone-800 space-y-2">
           <span className="text-[11px] font-semibold text-amber-400 uppercase tracking-wider block">⚡ One-Click Demo Credentials</span>
           <div className="grid grid-cols-2 gap-2">
@@ -134,7 +142,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           {isSignUp && (
             <>
-              {/* Role Toggle */}
+              {/* Buyer / Seller Role Toggle */}
               <div className="grid grid-cols-2 gap-2 p-1 bg-stone-900 rounded-xl border border-stone-800">
                 <button
                   type="button"

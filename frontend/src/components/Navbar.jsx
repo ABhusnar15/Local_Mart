@@ -3,13 +3,12 @@ import { ShoppingBag, Palette, Store, User as UserIcon, LogOut, PackageCheck, Sh
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 
-interface NavbarProps {
-  activeTab: 'shop' | 'customizer' | 'buyer' | 'seller';
-  setActiveTab: (tab: 'shop' | 'customizer' | 'buyer' | 'seller') => void;
-  openLoginModal: () => void;
-}
-
-export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, openLoginModal }) => {
+/**
+ * Navbar Component
+ * Renders the brand logo, navigation tabs (Shop, 3D Studio, My Orders, Seller Portal),
+ * shopping cart counter badge, and user authentication state.
+ */
+export const Navbar = ({ activeTab, setActiveTab, openLoginModal }) => {
   const { user, isAuthenticated, logout, isSeller } = useAuth();
   const { cartCount, setIsCartOpen } = useCart();
 
@@ -17,7 +16,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, openLog
     <header className="sticky top-0 z-40 glass-panel border-b border-stone-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         
-        {/* Brand Logo */}
+        {/* Brand Logo & Studio Name */}
         <div 
           className="flex items-center gap-3 cursor-pointer group"
           onClick={() => setActiveTab('shop')}
@@ -88,9 +87,9 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, openLog
           )}
         </nav>
 
-        {/* Right Controls: Cart & User Auth */}
+        {/* Right Controls: Cart Drawer & User Auth Toggle */}
         <div className="flex items-center gap-3">
-          {/* Shopping Cart Button */}
+          {/* Cart Icon Button with Badge */}
           <button
             onClick={() => setIsCartOpen(true)}
             className="relative p-3 rounded-full bg-stone-800/80 hover:bg-stone-700 text-stone-200 hover:text-amber-400 transition-colors border border-stone-700/50"
@@ -104,7 +103,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, openLog
             )}
           </button>
 
-          {/* User Auth Button */}
+          {/* Authentication State Button */}
           {isAuthenticated ? (
             <div className="flex items-center gap-3 pl-2 border-l border-stone-800">
               <div className="text-right hidden sm:block">

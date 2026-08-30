@@ -1,42 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Clock, CheckCircle2, Truck, Hammer, ShieldAlert, Sparkles } from 'lucide-react';
+import { Package, Clock, CheckCircle2, Truck, Hammer } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 
-export interface OrderItem {
-  id: number;
-  productName: string;
-  quantity: number;
-  unitPrice: number;
-  customShape?: string;
-  customSize?: string;
-  customGlazeColor?: string;
-  customEngraving?: string;
-}
-
-export interface Order {
-  id: number;
-  customerName: string;
-  email: string;
-  shape?: string;
-  size?: string;
-  glazeColor?: string;
-  engraving?: string;
-  totalPrice: number;
-  status: 'PENDING' | 'IN_PRODUCTION' | 'SHIPPED' | 'DELIVERED';
-  orderDate: string;
-  items: OrderItem[];
-}
-
-export const BuyerDashboard: React.FC = () => {
+/**
+ * Buyer Dashboard Component
+ * Displays the customer's order history, real-time crafting status badges,
+ * and custom studio specifications (shape, glaze color, engraving).
+ */
+export const BuyerDashboard = () => {
   const { user } = useAuth();
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchOrders();
   }, [user]);
 
+  /**
+   * Fetch customer orders from backend API
+   */
   const fetchOrders = async () => {
     try {
       setLoading(true);
@@ -50,7 +33,10 @@ export const BuyerDashboard: React.FC = () => {
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  /**
+   * Helper function returning status badge styling
+   */
+  const getStatusBadge = (status) => {
     switch (status) {
       case 'PENDING':
         return (
@@ -114,7 +100,7 @@ export const BuyerDashboard: React.FC = () => {
               key={order.id}
               className="glass-panel rounded-2xl p-6 border border-stone-800 space-y-6"
             >
-              {/* Order Top Line */}
+              {/* Order Header */}
               <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-stone-800">
                 <div>
                   <span className="text-xs text-stone-400">Order #{order.id}</span>
@@ -129,7 +115,7 @@ export const BuyerDashboard: React.FC = () => {
                 </div>
               </div>
 
-              {/* Progress Steps Visualizer */}
+              {/* Step Progress Bar */}
               <div className="grid grid-cols-4 gap-2 text-center py-2">
                 {[
                   { key: 'PENDING', label: 'Order Received' },
@@ -137,7 +123,7 @@ export const BuyerDashboard: React.FC = () => {
                   { key: 'SHIPPED', label: 'Dispatched' },
                   { key: 'DELIVERED', label: 'Delivered' },
                 ].map((step, idx) => {
-                  const stepIndexMap: Record<string, number> = { PENDING: 1, IN_PRODUCTION: 2, SHIPPED: 3, DELIVERED: 4 };
+                  const stepIndexMap = { PENDING: 1, IN_PRODUCTION: 2, SHIPPED: 3, DELIVERED: 4 };
                   const currentStepIdx = stepIndexMap[order.status] || 1;
                   const isCompleted = idx + 1 <= currentStepIdx;
 
@@ -156,7 +142,7 @@ export const BuyerDashboard: React.FC = () => {
                 })}
               </div>
 
-              {/* Items Detail List */}
+              {/* Items Specification List */}
               <div className="bg-stone-950/60 p-4 rounded-xl space-y-3 border border-stone-800/80">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-stone-400">Order Items & Custom Specifications</h4>
                 {order.items && order.items.length > 0 ? (

@@ -1,41 +1,23 @@
 import React, { createContext, useContext, useState } from 'react';
 
-export interface CartItem {
-  id: string; // unique cart item id
-  productId?: number;
-  name: string;
-  price: number;
-  image: string;
-  quantity: number;
-  isCustom?: boolean;
-  shape?: string;
-  size?: string;
-  glazeColor?: string;
-  engraving?: string;
-}
+/**
+ * Shopping Cart Context for Local Mart
+ * Manages cart items (both catalog products and 3D custom pottery creations), quantities, and checkout state.
+ */
+const CartContext = createContext(undefined);
 
-interface CartContextType {
-  cart: CartItem[];
-  addToCart: (item: Omit<CartItem, 'id'>) => void;
-  removeFromCart: (id: string) => void;
-  updateQuantity: (id: string, delta: number) => void;
-  clearCart: () => void;
-  cartCount: number;
-  cartSubtotal: number;
-  isCartOpen: boolean;
-  setIsCartOpen: (open: boolean) => void;
-}
-
-const CartContext = createContext<CartContextType | undefined>(undefined);
-
-export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [cart, setCart] = useState<CartItem[]>([]);
+export const CartProvider = ({ children }) => {
+  const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const addToCart = (item: Omit<CartItem, 'id'>) => {
+  /**
+   * Add an item to the shopping cart.
+   * Standard shop products increment quantity if already present; custom items create unique entries.
+   */
+  const addToCart = (item) => {
     const newItemId = `${item.productId || 'custom'}-${item.shape || ''}-${item.size || ''}-${item.glazeColor || ''}-${Date.now()}`;
     setCart((prev) => {
-      // Check if exact standard product exists
+      // Check if standard product already exists in cart
       if (!item.isCustom && item.productId) {
         const existingIndex = prev.findIndex((i) => i.productId === item.productId && !i.isCustom);
         if (existingIndex > -1) {
@@ -49,11 +31,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsCartOpen(true);
   };
 
-  const removeFromCart = (id: string) => {
+  /**
+   * Remove item from cart by item ID.
+   */
+  const removeFromCart = (id) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const updateQuantity = (id: string, delta: number) => {
+  /**
+   * Increment or decrement item quantity in cart.
+   */
+  const updateQuantity = (id, delta) => {
     setCart((prev) =>
       prev
         .map((item) => {
@@ -63,12 +51,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
           return item;
         })
-        .filter(Boolean) as CartItem[]
+        .filter(Boolean)
     );
   };
 
+  /**
+   * Reset/clear cart after order completion.
+   */
   const clearCart = () => setCart([]);
 
+  // Calculate total item count and subtotal price
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
   const cartSubtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
@@ -91,6 +83,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
+/**
+ * Custom Hook: Access cart state and actions.
+ */
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) {

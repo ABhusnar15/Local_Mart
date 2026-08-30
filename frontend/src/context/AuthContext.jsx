@@ -1,44 +1,37 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { api } from '../services/api';
 
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: 'BUYER' | 'SELLER' | 'ADMIN';
-  shopName?: string;
-  phone?: string;
-  address?: string;
-}
+/**
+ * Authentication Context for Local Mart
+ * Manages user login state, JWT token persistence, and role-based access controls.
+ */
+const AuthContext = createContext(undefined);
 
-interface AuthContextType {
-  user: User | null;
-  token: string | null;
-  login: (token: string, userData: User) => void;
-  logout: () => void;
-  isAuthenticated: boolean;
-  isSeller: boolean;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(() => {
+export const AuthProvider = ({ children }) => {
+  // Initialize user state from localStorage cache if available
+  const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('localmart_user');
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  const [token, setToken] = useState<string | null>(() => {
+  // Initialize JWT token from localStorage cache
+  const [token, setToken] = useState(() => {
     return localStorage.getItem('localmart_token');
   });
 
-  const login = (newToken: string, userData: User) => {
+  /**
+   * Log in user and cache JWT token + profile details in localStorage.
+   */
+  const login = (newToken, userData) => {
     setToken(newToken);
     setUser(userData);
     localStorage.setItem('localmart_token', newToken);
     localStorage.setItem('localmart_user', JSON.stringify(userData));
   };
 
+  /**
+   * Log out user and clear token cache.
+   */
   const logout = () => {
     setToken(null);
     setUser(null);
@@ -46,6 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('localmart_user');
   };
 
+  // Re-verify current authenticated user details from backend API on mount
   useEffect(() => {
     if (token && !user) {
       api.get('/auth/me')
@@ -73,6 +67,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
+/**
+ * Custom Hook: Access authentication state and actions.
+ */
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

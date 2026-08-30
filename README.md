@@ -12,7 +12,7 @@
   <img src="https://img.shields.io/badge/Java-17-orange.svg?style=for-the-badge&logo=java" alt="Java 17" />
   <img src="https://img.shields.io/badge/Spring_Boot-3.2.3-brightgreen.svg?style=for-the-badge&logo=springboot" alt="Spring Boot 3" />
   <img src="https://img.shields.io/badge/React-18-blue.svg?style=for-the-badge&logo=react" alt="React 18" />
-  <img src="https://img.shields.io/badge/TypeScript-5.2-blue.svg?style=for-the-badge&logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/JavaScript-ES6+-yellow.svg?style=for-the-badge&logo=javascript" alt="JavaScript" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-3.4-38bdf8.svg?style=for-the-badge&logo=tailwindcss" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/Maven-Build_Passed-success.svg?style=for-the-badge&logo=apachemaven" alt="Maven" />
 </p>

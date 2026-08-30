@@ -11,21 +11,25 @@ import { Cart } from './components/Cart';
 import { LoginModal } from './components/LoginModal';
 import { Sparkles, Heart, MapPin, ShieldCheck, Instagram, Twitter, Facebook } from 'lucide-react';
 
-const MainContent: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'shop' | 'customizer' | 'buyer' | 'seller'>('shop');
+/**
+ * Main Application Layout Component
+ * Coordinates top navigation tabs, active view rendering, cart drawer, authentication modal, and footer.
+ */
+const MainContent = () => {
+  const [activeTab, setActiveTab] = useState('shop');
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen flex flex-col bg-stone-950 text-stone-100 selection:bg-amber-500 selection:text-stone-950">
       
-      {/* Top Navbar */}
+      {/* Navbar Header */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         openLoginModal={() => setIsLoginModalOpen(true)}
       />
 
-      {/* Dynamic View rendering based on Active Tab */}
+      {/* Dynamic View rendering based on activeTab state */}
       <main className="flex-1">
         {activeTab === 'shop' && (
           <>
@@ -52,7 +56,7 @@ const MainContent: React.FC = () => {
       {/* Slide-over Shopping Cart */}
       <Cart />
 
-      {/* User Login & Registration Modal */}
+      {/* Login & Registration Dialog Modal */}
       <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
@@ -133,7 +137,7 @@ const MainContent: React.FC = () => {
 
           <div className="pt-8 border-t border-stone-800/80 text-center text-xs text-stone-500 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p>© 2026 Local Mart Artisan Marketplace. All rights reserved.</p>
-            <p className="font-mono text-[11px]">React + Java Spring Boot Architecture</p>
+            <p className="font-mono text-[11px]">React (JS) + Java Spring Boot Architecture</p>
           </div>
         </div>
       </footer>

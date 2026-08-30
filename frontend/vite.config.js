@@ -1,7 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// https://vitejs.dev/config/
+/**
+ * Vite Configuration for Local Mart Frontend
+ * Proxies backend REST API requests to Spring Boot server on port 8085.
+ */
 export default defineConfig({
   plugins: [react()],
   server: {
