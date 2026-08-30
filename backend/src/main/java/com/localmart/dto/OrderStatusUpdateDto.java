@@ -1,0 +1,12 @@
+package com.localmart.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class OrderStatusUpdateDto {
+    private String status; // "PENDING", "IN_PRODUCTION", "SHIPPED", "DELIVERED"
+}

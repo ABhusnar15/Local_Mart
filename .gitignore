@@ -1,0 +1,26 @@
+# Build & Dependency Directories
+node_modules/
+target/
+dist/
+build/
+.output/
+
+# IDE & Editor Settings
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Logs & Temporary Files
+*.log
+scratch/
+.env
+.env.local
+
+# H2 & Database Files
+*.db
+*.h2.db
+
+# OS Files
+Thumbs.db
